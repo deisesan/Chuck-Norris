@@ -4,6 +4,7 @@ export interface Joke {
   value: {
     id: number;
     joke: string;
+    categories: Category[];
   };
 }
 
@@ -13,10 +14,10 @@ export interface Count {
 }
 
 export interface Category {
-  values: string;
+  value: string;
 }
 
 export interface Categories {
   type: string;
-  value: Category[];
+  value: Category;
 }
