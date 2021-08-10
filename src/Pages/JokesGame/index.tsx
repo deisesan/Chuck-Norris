@@ -1,30 +1,22 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+  Button,
+  Card,
+  CardContent,
+  Paper,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { Joke } from '../../Types';
 import { getJokeRandom } from '../../Api/Jokes';
-
-const useStyles = makeStyles({
-  container: {
-    maxWidth: 1200,
-    marginLeft: 100,
-    marginRight: 300,
-    marginTop: '20px',
-  },
-  buttons: {
-    marginLeft: '100px',
-    marginTop: '100px',
-  },
-  root: {
-    maxWidth: 1600,
-    marginLeft: 100,
-  },
-  media: {
-    height: 140,
-  },
-});
+import * as T from './styles';
 
 const JokesGame = () => {
   const [joke, setJoke] = useState<Joke>();
@@ -33,13 +25,12 @@ const JokesGame = () => {
   const [wordSplit, setWordSplit] = useState<string[]>([]);
   const [arrayJokes, setArrayJokes] = useState<string[]>([]);
   const [click, setClick] = useState(false);
-  const classes = useStyles();
+  const [qtd, setQtd] = useState(0);
+  const [win, setWin] = useState(0);
+  const [text, setText] = useState('Calma');
 
   const getJoke = async () => {
     try {
-      if (localStorage.length === 10) {
-        clearStorage();
-      }
       const responseJoke = await getJokeRandom();
       setJoke(responseJoke.data);
       const jokeSplit = responseJoke.data.value.joke.split(' ');
@@ -48,33 +39,40 @@ const JokesGame = () => {
       console.log(jokeSplit[media]);
       jokeSplit[media] = '?';
       setWordSplit(jokeSplit);
-      updateArrayJoke();
+      // updateArrayJoke();
+      setQtd(qtd + 1);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const updateArrayJoke = () => {
-    if (localStorage.length !== 0) {
-      const temp = arrayJokes;
-      for (let i = 0; i < localStorage.length; i += 1) {
-        const id = localStorage.key(i);
-        const aux = localStorage.getItem(`${id}`);
-        temp[i] = aux || '';
-      }
-      setArrayJokes(temp);
-    }
-  };
+  // const updateArrayJoke = () => {
+  //   if (localStorage.length !== 0) {
+  //     const temp = arrayJokes;
+  //     for (let i = 0; i < localStorage.length; i += 1) {
+  //       const id = localStorage.key(i);
+  //       const aux = localStorage.getItem(`${id}`);
+  //       temp[i] = aux || '';
+  //       setWin(localStorage.length);
+  //     }
+  //     setArrayJokes(temp);
+  //   }
+  // };
 
-  const clearStorage = () => {
-    localStorage.clear();
+  const winner = () => {
+    if (win === 2) {
+      setText('Segredo');
+    }
   };
 
   const compWord = async () => {
     if (word === wordPlayer) {
-      localStorage.setItem(`${joke?.value.id}`, `${joke?.value.joke}`);
-      updateArrayJoke();
+      // localStorage.setItem(`${joke?.value.id}`, `${joke?.value.joke}`);
+      // updateArrayJoke();
       setClick(!click);
+      setWordPlayer('');
+      setWin(win + 1);
+      winner();
     } else {
       getJoke();
       setWordPlayer('');
@@ -83,33 +81,62 @@ const JokesGame = () => {
 
   useEffect(() => {
     getJoke();
-    updateArrayJoke();
-  }, [click]);
+    // updateArrayJoke();
+  }, [click, text]);
 
   return (
-    <div>
-      <form>
-        {wordSplit.map((j) => `${j} `)}
-        <input type="text" name="fvalue" value={wordPlayer} onChange={(e) => setWordPlayer(e.target.value)} />
-        <input type="button" value="Botão" onClick={() => compWord()} />
-      </form>
-      <TableContainer className={classes.container} component={Paper}>
-        <Table size="small" aria-label="a dense table">
+    <T.ContainerMain>
+      <T.Body>
+        <T.ContainerForm>
+          <T.Form>
+            <T.Joke>
+              <T.CardJoke>
+                <CardContent>
+                  <Typography variant="h5" component="h2">
+                    {wordSplit.map((j) => `${j} `)}
+                  </Typography>
+                </CardContent>
+              </T.CardJoke>
+              {/* <T.Button type="button" value="Botão" onClick={() => compWord()} /> */}
+            </T.Joke>
+            <T.TextFieldMod
+              required
+              id="standard-required"
+              variant="outlined"
+              label="Answer"
+              onChange={(e) => setWordPlayer(e.target.value)}
+            />
+            <T.ButtonWin variant="contained" color="default" onClick={() => compWord()}>
+              Press
+            </T.ButtonWin>
+          </T.Form>
+        </T.ContainerForm>
+        <T.ContainerScore>
+          Pergunta: {qtd} <p />
+          Acertadas: {win} <p />
+          <T.ButtonWin variant="contained" color="default">
+            {text}
+          </T.ButtonWin>
+        </T.ContainerScore>
+      </T.Body>
+      {/* <T.ContainerTable>
+        <TableContainer component={Paper}>
           <TableHead>
             <TableRow>
-              <TableCell>Piadas</TableCell>
+              <TableCell />
+              <TableCell>Jokes</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {arrayJokes.map((j) => (
               <TableRow key={j}>
-                <TableCell align="left">{j}</TableCell>
+                <TableCell align="center">{j}</TableCell>
               </TableRow>
             ))}
           </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+        </TableContainer>
+      </T.ContainerTable> */}
+    </T.ContainerMain>
   );
 };
 
