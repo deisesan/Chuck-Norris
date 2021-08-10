@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { Joke } from '../../Types';
 import { getJokeRandom } from '../../Api/Jokes';
-import Header from '../../Components/Header';
-import Footer from '../../Components/Footer';
 
 const useStyles = makeStyles({
   container: {
@@ -29,27 +27,33 @@ const useStyles = makeStyles({
 });
 
 const JokesGame = () => {
-  const [click, setClick] = useState(false);
+  const [joke, setJoke] = useState<Joke>();
+  const [word, setWord] = useState('');
+  const [wordPlayer, setWordPlayer] = useState('');
+  const [wordSplit, setWordSplit] = useState<string[]>([]);
   const [arrayJokes, setArrayJokes] = useState<string[]>([]);
-
-  const limparStorage = () => {
-    localStorage.clear();
-    setArrayJokes([]);
-  };
+  const [click, setClick] = useState(false);
+  const classes = useStyles();
 
   const getJoke = async () => {
     try {
+      if (localStorage.length === 10) {
+        clearStorage();
+      }
       const responseJoke = await getJokeRandom();
-      localStorage.setItem(`${responseJoke.data.value.id}`, `${responseJoke.data.value.joke}`);
-      console.log(responseJoke.data);
+      setJoke(responseJoke.data);
+      const jokeSplit = responseJoke.data.value.joke.split(' ');
+      const media = Math.trunc(jokeSplit.length / 2);
+      setWord(jokeSplit[media]);
+      console.log(jokeSplit[media]);
+      jokeSplit[media] = '?';
+      setWordSplit(jokeSplit);
       updateArrayJoke();
-      setClick(!click);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // eslint-disable-next-line consistent-return
   const updateArrayJoke = () => {
     if (localStorage.length !== 0) {
       const temp = arrayJokes;
@@ -58,63 +62,53 @@ const JokesGame = () => {
         const aux = localStorage.getItem(`${id}`);
         temp[i] = aux || '';
       }
-      setClick(true);
       setArrayJokes(temp);
     }
   };
 
-  useEffect(() => {
-    updateArrayJoke();
-  }, [click, arrayJokes]);
+  const clearStorage = () => {
+    localStorage.clear();
+  };
 
-  const classes = useStyles();
+  const compWord = async () => {
+    if (word === wordPlayer) {
+      localStorage.setItem(`${joke?.value.id}`, `${joke?.value.joke}`);
+      updateArrayJoke();
+      setClick(!click);
+    } else {
+      getJoke();
+      setWordPlayer('');
+    }
+  };
+
+  useEffect(() => {
+    getJoke();
+    updateArrayJoke();
+  }, [click]);
 
   return (
     <div>
-      <div>
-        <Header />
-      </div>
-      <div className={classes.buttons}>
-        <Button onClick={() => limparStorage()}>Limpar</Button>
-        <Button onClick={() => getJoke()}>Descobrir</Button>
-      </div>
-      <div>
-        <TableContainer className={classes.container} component={Paper}>
-          <Table size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                {/* <TableCell>ID</TableCell> */}
-                <TableCell>Piadas</TableCell>
+      <form>
+        {wordSplit.map((j) => `${j} `)}
+        <input type="text" name="fvalue" value={wordPlayer} onChange={(e) => setWordPlayer(e.target.value)} />
+        <input type="button" value="Botão" onClick={() => compWord()} />
+      </form>
+      <TableContainer className={classes.container} component={Paper}>
+        <Table size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Piadas</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {arrayJokes.map((j) => (
+              <TableRow key={j}>
+                <TableCell align="left">{j}</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {arrayJokes.map((joke, index) => (
-                <TableRow key={joke}>
-                  {/* <TableCell align="left">{localStorage.key(index)}</TableCell> */}
-                  <TableCell align="left">{joke}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* <TableContainer>
-          <Card className={classes.root}>
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="h2">
-                {arrayJokes.map((joke, index) => (
-                  <TableRow key={joke}>
-                    <TableCell align="left">{localStorage.key(index)}</TableCell>
-                    <TableCell align="left">{joke}</TableCell>
-                  </TableRow>
-                ))}
-              </Typography>
-            </CardContent>
-          </Card>
-        </TableContainer> */}
-      </div>
-      <div>
-        <Footer />
-      </div>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

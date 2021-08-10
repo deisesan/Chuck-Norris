@@ -8,4 +8,4 @@ export const getJokeRandom = async () => api.get<Joke>('/jokes/random');
 
 export const countJokes = async () => api.get<Count>('/jokes/count');
 
-// export const getJokesRandom = async (qtd: number) => api.get<Joke>(`/jokes/random/${qtd}`);
+export const getJokesRandom = async (qtd: number) => api.get<Joke>(`/jokes/random/${qtd}`);
