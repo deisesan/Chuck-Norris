@@ -36,9 +36,9 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "del -rf tsconfig.json && react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "del -rf tsconfig.json && react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
