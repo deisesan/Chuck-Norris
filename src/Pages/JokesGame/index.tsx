@@ -19,10 +19,10 @@ const JokesGame = () => {
       const responseJoke = await getJokeRandom();
       const jokeSplit = responseJoke.data.value.joke.split(' ');
       const media = Math.trunc(jokeSplit.length / 2);
-      setWord(jokeSplit[media].replace('&quot;', ''));
-      console.log(jokeSplit[media]);
+      setWord(jokeSplit[media].replace(/[^\w\s]/gi, ''));
       jokeSplit[media] = '????';
       setWordSplit(jokeSplit);
+      console.log(word);
       setQtd(qtd + 1);
     } catch (error) {
       console.log(error);
@@ -30,9 +30,6 @@ const JokesGame = () => {
   };
 
   const compWord = async () => {
-    word.replace(/&quot;/g, '');
-    word.replace('.', '');
-
     if (word.toLowerCase() === wordPlayer.toLowerCase()) {
       setClick(!click);
       setWordPlayer('');
@@ -53,7 +50,7 @@ const JokesGame = () => {
         <T.ContainerForm>
           <T.CardJoke>
             <CardContent>
-              <Typography variant="h5">{wordSplit.map((j) => `${j.replace(/&quot;/g, '"')} `)}</Typography>
+              <Typography variant="h5">{wordSplit.map((j) => `${j} `)}</Typography>
             </CardContent>
           </T.CardJoke>
           <T.CardJokePlayer>

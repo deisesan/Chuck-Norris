@@ -4,7 +4,7 @@ import { Joke, Count } from '../Types';
 
 export const getJoke = async (id: number) => api.get<Joke>(`/jokes/${id}`);
 
-export const getJokeRandom = async () => api.get<Joke>('/jokes/random');
+export const getJokeRandom = async () => api.get<Joke>('/jokes/random?escape=javascript');
 
 export const countJokes = async () => api.get<Count>('/jokes/count');
 
