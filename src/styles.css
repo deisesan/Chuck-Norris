@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;1,100&display=swap');
 
 body {
-    background-image: url(./Assets/chuck-norris5.jpg);
+    background-image: url(./Assets/chuck.jpg);
     /* background-image: url(./Assets/chuck-norris-thumbs-up.gif); */
     background-repeat: no-repeat;
     background-size: cover;
