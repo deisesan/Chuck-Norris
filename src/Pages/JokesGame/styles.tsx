@@ -131,10 +131,6 @@ export const ContainerAnswer = styled.div`
   }
 `;
 
-export const ButtonWin = styled(Button)``;
-
-export const ContainerTable = styled.div``;
-
 export const InputResposta = styled.a`
   text-decoration: none;
   color: black;
@@ -145,8 +141,6 @@ export const CardJoke = styled(Card)`
   margin-bottom: 2%;
   display: flex;
 `;
-
-export const Joke = styled.div``;
 
 export const CardJokePlayer = styled.div`
   margin-left: 50%;
@@ -199,3 +193,9 @@ export const Process = styled.div`
 `;
 
 export const Footer = styled.div``;
+
+export const ButtonWin = styled(Button)``;
+
+export const ContainerTable = styled.div``;
+
+export const Joke = styled.div``;
